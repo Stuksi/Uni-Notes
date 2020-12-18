@@ -278,4 +278,124 @@ int evaluate_expression(typename binary_tree<char>::position tree)
     return operands.top()-'0';
 }
 
+binary_tree<int> generate_balanced_tree(size_t h)
+{
+    binary_tree<int> tree;
+    typename binary_tree<int>::position root = tree.root_position().set(0);
+    std::stack<typename binary_tree<int>::position> s;
+    
+    s.push(root);
+    while (!s.empty())
+    {
+        typename binary_tree<int>::position top = s.top(); s.pop();
+        if (top.get() < h - 1)
+        {
+            top.left().set(top.get() + 1);
+            top.right().set(top.get() + 1);
+            s.push(top.left());
+            s.push(top.right());
+        }
+    }
+    return tree;
+}
+
+binary_tree<char> generate_string_tree(const char* str)
+{
+    binary_tree<char> tree;
+    if (!str[0])
+    {
+        return tree;
+    }
+    else if (!str[1])
+    {
+        tree.root_position().set(str[0]);
+        return tree;
+    }
+
+    size_t len = 0, i = 0;
+    while (str[i++]) len++;
+    size_t h = ceil(log2(len));
+
+    struct pair
+    {
+        typename binary_tree<char>::position tree;
+        size_t h;
+    };
+
+    std::stack<pair> s;
+    typename binary_tree<char>::position root = tree.root_position().set('|');
+
+    s.push(pair {root, 0});
+    while (!s.empty() && *str)
+    {
+        pair top = s.top(); s.pop();
+        if (top.h == h)
+        {
+            top.tree.set(str[0]);
+            str++;
+        }
+        else 
+        {
+            top.tree.right().set('|');
+            top.tree.left().set('|');
+            s.push(pair {top.tree.right(), top.h + 1});
+            s.push(pair {top.tree.left(), top.h + 1});
+        }
+    }
+
+    return tree;
+}
+
+void convert_edge_count_tree(typename binary_tree<int>::position tree)
+{
+    if (tree.left().empty() && tree.right().empty())
+    {
+        tree.set(1);
+        return;
+    }
+    tree.set(1);
+    if (!tree.left().empty())
+    {
+        convert_edge_count_tree(tree.left());
+        tree.set(tree.get() + tree.left().get());
+    }
+    if (!tree.right().empty())
+    {
+        convert_edge_count_tree(tree.right());
+        tree.set(tree.get() + tree.right().get());
+    }
+}
+
+binary_tree<char> expression_deserialize(std::istream& in)
+{
+
+    // -------------------------- NOT WORKING ------------------------- //
+    binary_tree<char> tree;
+    std::stack<typename binary_tree<char>::position> s;
+
+    s.push(tree.root_position());
+    while (!s.empty())
+    {
+        typename binary_tree<char>::position top = s.top().set(0); s.pop();
+        if (isdigit(in.peek()))
+        {
+            top.set(in.get());
+        }
+        else 
+        {
+            assert(in.get() == '(');   
+            s.push(top.right().set(0));
+            assert(in.peek() == '*' || in.peek() == '+' || in.peek() == '/' || in.peek() == '-');
+            top.set(in.get());
+            s.push(top.left().set(0));
+            assert(in.get() == ')');
+        }
+    }
+
+    return tree;
+}
+
+
+
+
 #endif

@@ -43,6 +43,13 @@ T get_at(typename binary_tree<T>::position, int);
 
 int evaluate_expression(typename binary_tree<char>::position);
 
+binary_tree<int> generate_balanced_tree(size_t);
+
+binary_tree<char> generate_string_tree(const char*);
+
+binary_tree<int> convert_edge_count_tree(binary_tree<int>);
+
+
 #include "binary_tree_functions.cpp"
 
 #endif

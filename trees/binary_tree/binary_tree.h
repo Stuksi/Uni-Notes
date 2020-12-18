@@ -22,17 +22,9 @@ public:
     binary_tree& operator= (const binary_tree&);
     ~binary_tree();
 
-    binary_tree& insert(const T&);
     
     binary_tree& from_scheme(std::istream&);
-    binary_tree& to_scheme(std::ostream&);
-
-    binary_tree& parse_expression(std::istream&);
-    
-    binary_tree<int>& generate_balanced_tree(size_t);
-    binary_tree<char>& generate_string_tree(const char*);
-    binary_tree<int>& generate_edge_count_tree();
-
+    binary_tree& to_scheme(std::ostream&);    
 
 public:
     class position
@@ -41,11 +33,12 @@ public:
         node*& current;
     public:
         position(node*&);
+        position& operator= (const position&);
 
         position left() const;
         position right() const;
         bool empty() const;
-        void set(const T&);
+        position& set(const T&);
         T get() const;
         node* tree_node() const; 
     };
